@@ -262,12 +262,12 @@ public class ExServer {
 
         @Override
         public void onMessagePublish(MessagePublishRequest request, StreamObserver<ValuedResponse> responseObserver) {
-            DEBUG("onMessagePublish", request);
+            // DEBUG("onMessagePublish", request);
 
             ByteString bstr = ByteString.copyFromUtf8("hardcode payload by exhook-svr-java :)");
             String topic = request.getMessage().getTopic();
 
-            if (topic.startsWith("BLE111444/")) {
+            if (topic.startsWith("BLE111444")) {
                 logger.info("xwk-iot-exhook Matched topic: " + topic);
 
                 // 1. 获取原始消息
@@ -282,7 +282,9 @@ public class ExServer {
                     String ip = data.get("ip").toString();
                     String macAddress = data.get("mac").toString();
                     Object devicePacks = data.get("devices");
-                    logger.info(macAddress + " " + ip + " " + devicePacks);
+                    long time = request.getMessage().getTimestamp();
+                    // logger.info(macAddress + " " + ip + " " + devicePacks);
+                    logger.info("xwk-iot-exhook " + macAddress + " " + ip + " " + devicePacks + " " + time);
                 } catch (Exception e) {
                     logger.warning(topic + " Failed to decode MessagePack data: " + e.getMessage());
                 }
@@ -304,6 +306,7 @@ public class ExServer {
                 // }
             } else {
                 logger.info("Topic not matched: " + topic);
+                DEBUG("onMessagePublish", request);
                 // responseObserver.onNext(Message.MessageResponse.newBuilder().setMessage(request).build());
             }
 
