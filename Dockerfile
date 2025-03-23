@@ -1,7 +1,7 @@
 FROM maven:3.8.5-openjdk-8-slim
 
-# 包名称
-ARG PACKAGE_NAME=exhook-svr-1.0-jar-with-dependencies
+# 默认环境变量包名
+ENV PACKAGE_NAME="exhook-svr-1.0-jar-with-dependencies"
 
 # RUN ["ls", "-alh"]
 
