@@ -14,3 +14,7 @@ services:
       - ./xwk-iot-exhook/logs/:/app/logs
     networks:
       - pre_xwk_network
+networks:
+  pre_xwk_network:
+     name: xwk_network
+     external: true
