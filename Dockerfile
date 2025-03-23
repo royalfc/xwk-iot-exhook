@@ -6,6 +6,7 @@ ARG PACKAGE_NAME=exhook-svr-1.0-jar-with-dependencies
 # RUN ["ls", "-alh"]
 
 WORKDIR /app
+RUN ["ls", "-alh", "target/"]
 COPY target/${PACKAGE_NAME}.jar /app/${PACKAGE_NAME}.jar
 RUN chmod +x /app/${PACKAGE_NAME}.jar
 
