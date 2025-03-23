@@ -19,7 +19,7 @@ jobs:
       - name: Set up JDK
         uses: actions/setup-java@v2
         with:
-          java-version: "8"
+          java-version: "17"
           distribution: "temurin"
 
       # 缓存 Maven 依赖
@@ -35,13 +35,6 @@ jobs:
       - name: Build with Maven
         run: |
           mvn clean package -DskipTests -e -X
-          if [ ! -d "target" ]; then
-            echo "Error: target directory not found!"
-            exit 1
-          fi
-
-      - name: Debug workspace
-        run: ls -la
 
       # 登录 aliyun Docker hub 
       - name: Log in to aliyun Docker Hub

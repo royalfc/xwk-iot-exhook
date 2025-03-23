@@ -1,4 +1,4 @@
-FROM maven:3.8.5-openjdk-8-slim
+FROM maven:3.8.5-openjdk-17-slim
 
 # 包名称
 ARG PACKAGE_NAME=exhook-svr-1.0-jar-with-dependencies
@@ -10,7 +10,6 @@ WORKDIR /app
 COPY target/${PACKAGE_NAME}.jar /app/${PACKAGE_NAME}.jar
 
 RUN ["ls", "-alh"]
-RUN ["ls", "-alh", "target"]
 
 RUN chmod +x /app/${PACKAGE_NAME}.jar
 
