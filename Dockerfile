@@ -10,7 +10,7 @@ WORKDIR /app
 ADD . /app
 
 # COPY target/${PACKAGE_NAME}.jar /app/${PACKAGE_NAME}.jar
-RUN ["mvn", "clean", "package", "-Dmaven.test.skip=true"]
+# RUN ["mvn", "clean", "package", "-Dmaven.test.skip=true"]
 
 RUN ["ls", "-alh"]
 
