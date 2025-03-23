@@ -1,8 +1,8 @@
 services:
   iot-exhook:
     image: registry.cn-guangzhou.aliyuncs.com/sing-hub/xwk-iot-exhook:latest
-    env_file:
-      - .env
+    # env_file:
+    #   - .env
     container_name: ctn-exhook
     restart: always
     build:
