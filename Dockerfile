@@ -14,7 +14,7 @@ RUN ["mvn", "clean", "package", "-Dmaven.test.skip=true"]
 
 RUN ["ls", "-alh"]
 
-RUN chmod +x /app/${PACKAGE_NAME}.jar
+RUN chmod +x /app/target/${PACKAGE_NAME}.jar
 
 
 # 设置默认环境变量
@@ -27,4 +27,4 @@ EXPOSE 9000
 
 # 启动应用程序时添加环境变量参数
 # java -jar target/exhook-svr-1.0-jar-with-dependencies.jar
-ENTRYPOINT ["sh", "-c", "java $JAVA_OPTS -jar /app/${PACKAGE_NAME}.jar"]
+ENTRYPOINT ["sh", "-c", "java $JAVA_OPTS -jar /app/target/${PACKAGE_NAME}.jar"]
