@@ -20,17 +20,15 @@ import io.grpc.Server;
 import io.grpc.ServerBuilder;
 import io.grpc.stub.StreamObserver;
 
-import com.fasterxml.jackson.core.exc.StreamReadException;
 import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.DatabindException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.protobuf.ByteString;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.msgpack.jackson.dataformat.MessagePackFactory;
@@ -53,8 +51,7 @@ public class ExServer {
         Runtime.getRuntime().addShutdownHook(new Thread() {
             @Override
             public void run() {
-                // Use stderr here since the logger may have been reset by its JVM shutdown
-                // hook.
+                // Use stderr here since the logger may have been reset by its JVM shutdown hook.
                 System.err.println("*** shutting down gRPC server since JVM is shutting down");
                 try {
                     ExServer.this.stop();
@@ -73,8 +70,7 @@ public class ExServer {
     }
 
     /**
-     * Await termination on the main thread since the grpc library uses daemon
-     * threads.
+     * Await termination on the main thread since the grpc library uses daemon threads.
      */
     private void blockUntilShutdown() throws InterruptedException {
         if (server != null) {
@@ -84,7 +80,7 @@ public class ExServer {
 
     /**
      * Main launches the server from the command line.
-     */
+    */
     public static void main(String[] args) throws IOException, InterruptedException {
         final ExServer server = new ExServer();
         server.start();
@@ -161,8 +157,7 @@ public class ExServer {
         }
 
         @Override
-        public void onClientDisconnected(ClientDisconnectedRequest request,
-                StreamObserver<EmptySuccess> responseObserver) {
+        public void onClientDisconnected(ClientDisconnectedRequest request, StreamObserver<EmptySuccess> responseObserver) {
             DEBUG("onClientDisconnected", request);
             EmptySuccess reply = EmptySuccess.newBuilder().build();
             responseObserver.onNext(reply);
@@ -170,13 +165,12 @@ public class ExServer {
         }
 
         @Override
-        public void onClientAuthenticate(ClientAuthenticateRequest request,
-                StreamObserver<ValuedResponse> responseObserver) {
+        public void onClientAuthenticate(ClientAuthenticateRequest request, StreamObserver<ValuedResponse> responseObserver) {
             DEBUG("onClientAuthenticate", request);
             ValuedResponse reply = ValuedResponse.newBuilder()
-                    .setBoolResult(true)
-                    .setType(ValuedResponse.ResponsedType.STOP_AND_RETURN)
-                    .build();
+                                                 .setBoolResult(true)
+                                                 .setType(ValuedResponse.ResponsedType.STOP_AND_RETURN)
+                                                 .build();
             responseObserver.onNext(reply);
             responseObserver.onCompleted();
         }
@@ -185,9 +179,9 @@ public class ExServer {
         public void onClientAuthorize(ClientAuthorizeRequest request, StreamObserver<ValuedResponse> responseObserver) {
             DEBUG("onClientAuthorize", request);
             ValuedResponse reply = ValuedResponse.newBuilder()
-                    .setBoolResult(true)
-                    .setType(ValuedResponse.ResponsedType.STOP_AND_RETURN)
-                    .build();
+                                                 .setBoolResult(true)
+                                                 .setType(ValuedResponse.ResponsedType.STOP_AND_RETURN)
+                                                 .build();
 
             responseObserver.onNext(reply);
             responseObserver.onCompleted();
@@ -202,8 +196,7 @@ public class ExServer {
         }
 
         @Override
-        public void onClientUnsubscribe(ClientUnsubscribeRequest request,
-                StreamObserver<EmptySuccess> responseObserver) {
+        public void onClientUnsubscribe(ClientUnsubscribeRequest request, StreamObserver<EmptySuccess> responseObserver) {
             DEBUG("onClientUnsubscribe", request);
             EmptySuccess reply = EmptySuccess.newBuilder().build();
             responseObserver.onNext(reply);
@@ -219,8 +212,7 @@ public class ExServer {
         }
 
         @Override
-        public void onSessionSubscribed(SessionSubscribedRequest request,
-                StreamObserver<EmptySuccess> responseObserver) {
+        public void onSessionSubscribed(SessionSubscribedRequest request, StreamObserver<EmptySuccess> responseObserver) {
             DEBUG("onSessionSubscribed", request);
             EmptySuccess reply = EmptySuccess.newBuilder().build();
             responseObserver.onNext(reply);
@@ -228,8 +220,7 @@ public class ExServer {
         }
 
         @Override
-        public void onSessionUnsubscribed(SessionUnsubscribedRequest request,
-                StreamObserver<EmptySuccess> responseObserver) {
+        public void onSessionUnsubscribed(SessionUnsubscribedRequest request, StreamObserver<EmptySuccess> responseObserver) {
             DEBUG("onSessionUnsubscribed", request);
             EmptySuccess reply = EmptySuccess.newBuilder().build();
             responseObserver.onNext(reply);
@@ -261,8 +252,7 @@ public class ExServer {
         }
 
         @Override
-        public void onSessionTerminated(SessionTerminatedRequest request,
-                StreamObserver<EmptySuccess> responseObserver) {
+        public void onSessionTerminated(SessionTerminatedRequest request, StreamObserver<EmptySuccess> responseObserver) {
             DEBUG("onSessionTerminated", request);
             EmptySuccess reply = EmptySuccess.newBuilder().build();
             responseObserver.onNext(reply);
@@ -274,7 +264,6 @@ public class ExServer {
             DEBUG("onMessagePublish", request);
 
             ByteString bstr = ByteString.copyFromUtf8("hardcode payload by exhook-svr-java :)");
-            // ByteString bstr = request.getMessage().getPayload();
             String topic = request.getMessage().getTopic();
 
             if (topic.startsWith("BLE111444/")) {
@@ -317,16 +306,18 @@ public class ExServer {
                 // responseObserver.onNext(Message.MessageResponse.newBuilder().setMessage(request).build());
             }
 
+
             Message nmsg = Message.newBuilder()
-                    .setId(request.getMessage().getId())
-                    .setNode(request.getMessage().getNode())
-                    .setFrom(request.getMessage().getFrom())
-                    .setTopic(request.getMessage().getTopic())
-                    .setPayload(bstr).build();
+                                  .setId     (request.getMessage().getId())
+                                  .setNode   (request.getMessage().getNode())
+                                  .setFrom   (request.getMessage().getFrom())
+                                  .setTopic  (request.getMessage().getTopic())
+                                  .setPayload(bstr).build();
+
 
             ValuedResponse reply = ValuedResponse.newBuilder()
-                    .setType(ValuedResponse.ResponsedType.STOP_AND_RETURN)
-                    .setMessage(nmsg).build();
+                                                 .setType(ValuedResponse.ResponsedType.STOP_AND_RETURN)
+                                                 .setMessage(nmsg).build();
             responseObserver.onNext(reply);
             responseObserver.onCompleted();
         }
@@ -349,30 +340,30 @@ public class ExServer {
             return null;
         }
 
-        // case2: stop publish the 't/d' messages
-        // @Override
-        // public void onMessagePublish(MessagePublishRequest request,
-        // StreamObserver<ValuedResponse> responseObserver) {
-        // DEBUG("onMessagePublish", request);
-        //
-        // Message nmsg = request.getMessage();
-        // if ("t/d".equals(nmsg.getTopic())) {
-        // ByteString bstr = ByteString.copyFromUtf8("");
-        // nmsg = Message.newBuilder()
-        // .setId (request.getMessage().getId())
-        // .setNode (request.getMessage().getNode())
-        // .setFrom (request.getMessage().getFrom())
-        // .setTopic (request.getMessage().getTopic())
-        // .setPayload(bstr)
-        // .putHeaders("allow_publish", "false").build();
-        // }
-        //
-        // ValuedResponse reply = ValuedResponse.newBuilder()
-        // .setType(ValuedResponse.ResponsedType.STOP_AND_RETURN)
-        // .setMessage(nmsg).build();
-        // responseObserver.onNext(reply);
-        // responseObserver.onCompleted();
-        // }
+
+// case2: stop publish the 't/d' messages
+//        @Override
+//        public void onMessagePublish(MessagePublishRequest request, StreamObserver<ValuedResponse> responseObserver) {
+//            DEBUG("onMessagePublish", request);
+//
+//            Message nmsg = request.getMessage();
+//            if ("t/d".equals(nmsg.getTopic())) {
+//                ByteString bstr = ByteString.copyFromUtf8("");
+//                nmsg = Message.newBuilder()
+//                              .setId     (request.getMessage().getId())
+//                              .setNode   (request.getMessage().getNode())
+//                              .setFrom   (request.getMessage().getFrom())
+//                              .setTopic  (request.getMessage().getTopic())
+//                              .setPayload(bstr)
+//                              .putHeaders("allow_publish", "false").build();
+//            }
+//
+//            ValuedResponse reply = ValuedResponse.newBuilder()
+//                                                 .setType(ValuedResponse.ResponsedType.STOP_AND_RETURN)
+//                                                 .setMessage(nmsg).build();
+//            responseObserver.onNext(reply);
+//            responseObserver.onCompleted();
+//        }
 
         @Override
         public void onMessageDelivered(MessageDeliveredRequest request, StreamObserver<EmptySuccess> responseObserver) {
