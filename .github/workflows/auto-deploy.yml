@@ -44,7 +44,7 @@ jobs:
       - name: Build and push Docker image
         run: |
           docker pull ${{ env.DOCKER_REGISTRY }}/sing-hub/${{env.IMAGE_NAME}}:latest  || true
-          docker build --cache-from ${{ env.DOCKER_REGISTRY }}/sing-hub/${{env.IMAGE_NAME}}:latest -t ${{ env.DOCKER_REGISTRY }}/sing-hub/${{env.IMAGE_NAME}}:latest .
+          docker build -t ${{ env.DOCKER_REGISTRY }}/sing-hub/${{env.IMAGE_NAME}}:latest .
           IMAGE_ID=$(docker images -q ${{ env.DOCKER_REGISTRY }}/sing-hub/${{env.IMAGE_NAME}}:latest)
           if [ -n "$IMAGE_ID" ]; then
             IMAGE_CREATED=$(docker inspect -f '{{.Created}}' $IMAGE_ID)
