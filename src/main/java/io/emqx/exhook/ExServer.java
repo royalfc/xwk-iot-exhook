@@ -90,7 +90,8 @@ public class ExServer {
     static class HookProviderImpl extends HookProviderGrpc.HookProviderImplBase {
 
         public void DEBUG(String fn, Object req) {
-            System.out.printf(fn + ", request: " + req);
+            // System.out.printf(fn + ", request: " + req);
+            logger.info(fn + ", request: " + req);
         }
 
         @Override
