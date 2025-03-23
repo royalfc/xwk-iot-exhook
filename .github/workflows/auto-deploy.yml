@@ -19,7 +19,7 @@ jobs:
       - name: Set up JDK
         uses: actions/setup-java@v2
         with:
-          java-version: "17"
+          java-version: "8"
           distribution: "temurin"
 
       # 缓存 Maven 依赖
