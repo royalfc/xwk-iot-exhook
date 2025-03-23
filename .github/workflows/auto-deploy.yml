@@ -1,0 +1,86 @@
+name: Deploy to server
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    env:
+      DOCKER_REGISTRY: registry.cn-guangzhou.aliyuncs.com
+      IMAGE_NAME: xwk-iot-exhook
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up JDK
+        uses: actions/setup-java@v2
+        with:
+          java-version: "17"
+          distribution: "temurin"
+
+      # 缓存 Maven 依赖
+      - name: Cache Maven dependencies
+        uses: actions/cache@v4
+        with:
+          path: ~/.m2/repository
+          #  每次都会计算 pom.xml 文件的哈希值，如果哈希值发生变化，就会重新下载依赖
+          key: ${{ runner.os }}-maven-${{ hashFiles('pom.xml') }}
+          restore-keys: |
+            ${{ runner.os }}-maven-
+
+      - name: Build with Maven
+        run: mvn clean package -DskipTests -e -X
+
+      # 登录 aliyun Docker hub 
+      - name: Log in to aliyun Docker Hub
+        run: echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin ${{ env.DOCKER_REGISTRY }}
+
+      # 构建和推送镜像
+      # docker build --cache-from /sing-hub/:latest -t /sing-hub/:latest -f jeecg-module-system/jeecg-system-start/Dockerfile .
+      - name: Build and push Docker image
+        run: |
+          docker pull ${{ env.DOCKER_REGISTRY }}/sing-hub/${{env.IMAGE_NAME}}:latest  || true
+          docker build --cache-from ${{ env.DOCKER_REGISTRY }}/sing-hub/${{env.IMAGE_NAME}}:latest -t ${{ env.DOCKER_REGISTRY }}/sing-hub/${{env.IMAGE_NAME}}:latest -f Dockerfile .
+          IMAGE_ID=$(docker images -q ${{ env.DOCKER_REGISTRY }}/sing-hub/${{env.IMAGE_NAME}}:latest)
+          if [ -n "$IMAGE_ID" ]; then
+            IMAGE_CREATED=$(docker inspect -f '{{.Created}}' $IMAGE_ID)
+            COMMIT_DATE=$(git log -1 --format=%cI -- ${{env.IMAGE_NAME}})
+            if [ "$IMAGE_CREATED" \> "$COMMIT_DATE" ]; then
+              echo "No changes detected, skipping push."
+            else
+              echo "Changes detected for ${{env.IMAGE_NAME}}, pushing image."
+              docker push ${{ env.DOCKER_REGISTRY }}/sing-hub/${{env.IMAGE_NAME}}:latest
+            fi
+          else
+            echo "No existing image for ${{env.IMAGE_NAME}}, pushing new image."
+            docker push ${{ env.DOCKER_REGISTRY }}/sing-hub/${{env.IMAGE_NAME}}:latest
+          fi
+
+      - name: Setup SSH
+        uses: webfactory/ssh-agent@v0.5.3
+        with:
+          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+      
+      # 自动清理构建过程产生的中间层 更新镜像 重启服务
+      - name: Pull docker image and Restart service
+        run: |
+          ssh -o StrictHostKeyChecking=no ${{vars.SERVER_USER}}@${{vars.SERVER_HOST}} "cd ${{vars.SERVER_DIR}} && docker image prune -f && docker-compose pull && docker-compose down && docker-compose up -d"
+      
+      - name:  Send fail Notication
+        if: failure()
+        uses: dawidd6/action-send-mail@v3
+        with:
+          server_address: smtp.163.com
+          server_port: 465
+          username: ${{ secrets.EMAIL_USERNAME }}
+          password: ${{ secrets.EMAIL_PASSWORD }}
+          subject: Failed on ${{ github.repository }}
+          body: |
+            Build failed for commit ${{ github.sha }} pushed by ${{ github.actor }}. 
+            Please check the logs for more details.
+          to: xingdavis@qq.com, 284050079@qq.com
+          from: xingdavis@163.com
