@@ -7,7 +7,10 @@ ARG PACKAGE_NAME=exhook-svr-1.0-jar-with-dependencies
 
 WORKDIR /app
 
-COPY target/${PACKAGE_NAME}.jar /app/${PACKAGE_NAME}.jar
+ADD . /app
+
+# COPY target/${PACKAGE_NAME}.jar /app/${PACKAGE_NAME}.jar
+RUN ["mvn", "clean", "package", "-Dmaven.test.skip=true"]
 
 RUN ["ls", "-alh"]
 

@@ -35,13 +35,6 @@ jobs:
       - name: Build with Maven
         run: |
           mvn clean package -DskipTests -e -X
-          if [ ! -d "target" ]; then
-            echo "Error: target directory not found!"
-            exit 1
-          fi
-
-      - name: Debug workspace
-        run: ls -la
 
       # 登录 aliyun Docker hub 
       - name: Log in to aliyun Docker Hub
