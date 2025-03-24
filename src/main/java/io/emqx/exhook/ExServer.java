@@ -27,6 +27,7 @@ import com.google.protobuf.ByteString;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
@@ -281,9 +282,18 @@ public class ExServer {
                     logger.info("xwk-iot-exhook MessagePack Decoded message: " + data);
                     String ip = data.get("ip").toString();
                     String macAddress = data.get("mac").toString();
-                    Object devicePacks = data.get("devices");
+                    List<byte[]> devicePacks = (List<byte[]>) data.get("devices");
                     long time = request.getMessage().getTimestamp();
                     // logger.info(macAddress + " " + ip + " " + devicePacks);
+                    for (byte[] bytes : devicePacks) {
+                        Object beacon = parseBeaconData(bytes);
+                        if (beacon != null) {
+                            logger.info("Parsed beacon: " + beacon.toString());
+                        } else {
+                            logger.warning("Failed to parse beacon data for topic: " + topic);
+                        }
+                    }
+                    
                     logger.info("xwk-iot-exhook " + macAddress + " " + ip + " " + devicePacks + " " + time);
                 } catch (Exception e) {
                     logger.warning(topic + " Failed to decode MessagePack data: " + e.getMessage());
