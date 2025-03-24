@@ -21,8 +21,8 @@ public class BeaconParser {
             return null;
         }
 
-        // / 提取 RSSI（网关设备的第8个字节是 RSSI，索引为7）
-        byte rssiByte = rawData[14];
+        // 提取 RSSI（网关设备的第8个字节是 RSSI，索引为7）
+        byte rssiByte = rawData[7];
         int rssi = (rssiByte & 0xFF) - 256; // 转为有符号整数（-256即 0xFFFFFF00 的补码操作）
 
         // 提取 UUID

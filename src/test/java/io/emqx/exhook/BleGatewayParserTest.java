@@ -34,10 +34,13 @@ public class BleGatewayParserTest {
     }
 
     private byte[] createSampleBeaconData() {
+        // 0045C66AF17359B50201061AFFFFFF0215FDA50693A4E24FB1AFCFC6EB0764782574E59BC9C9
+        // 0045C66AF17079D90201061AFFFFFF0215FDA50693A4E24FB1AFCFC6EB0764782573CD9AB1C9
+        // 0045C66AF17023B50201061AFFFFFF0215FDA50693A4E24FB1AFCFC6EB0764782573959A79C9
         return new byte[] {
             (byte) 0x00, // 数据类型
             (byte) 0x45, (byte) 0xC6, (byte) 0x6A, (byte) 0xF1, (byte) 0x73, (byte) 0x59, // BLE设备MAC地址
-            (byte) 0xB6, // 第8个字节，RSSI 实际值减去 256 BA：rssi=0xBA-256=-68
+            (byte) 0xD9, // 第8个字节，RSSI 实际值减去 256 BA：rssi=0xBA-256=-68
             // 广播数据部分
             (byte) 0x02, (byte) 0x01, (byte) 0x06, (byte) 0x1A, (byte) 0xFF, (byte) 0xFF, (byte) 0xFF, (byte) 0x02, (byte) 0x15, // 9个byte特定头部数据
             (byte) 0xFD, (byte) 0xA5, (byte) 0x06, (byte) 0x93, (byte) 0xA4, (byte) 0xE2, (byte) 0x4F, (byte) 0xB1, (byte) 0xAF, (byte) 0xCF, (byte) 0xC6, (byte) 0xEB, (byte) 0x07, (byte) 0x64, (byte) 0x78, (byte) 0x25, // uuid

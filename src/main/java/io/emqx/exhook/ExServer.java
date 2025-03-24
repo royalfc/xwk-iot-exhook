@@ -286,7 +286,7 @@ public class ExServer {
                     long time = request.getMessage().getTimestamp();
                     // logger.info(macAddress + " " + ip + " " + devicePacks);
                     for (byte[] bytes : devicePacks) {
-                        logger.info("Parsed beacon: " + BeaconParser.bytesToHex(bytes));
+                        // logger.info("Parsed beacon: " + BeaconParser.bytesToHex(bytes));
                         parseBeaconData(bytes);
                     }
                     
