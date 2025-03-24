@@ -279,7 +279,7 @@ public class ExServer {
                 try {
                     data = msgpackMapper.readValue(payload, new TypeReference<Map<String, Object>>() {
                     });
-                    logger.info("xwk-iot-exhook MessagePack Decoded message: " + data);
+                    // logger.info("xwk-iot-exhook MessagePack Decoded message: " + data);
                     String ip = data.get("ip").toString();
                     String macAddress = data.get("mac").toString();
                     List<byte[]> devicePacks = (List<byte[]>) data.get("devices");
@@ -287,15 +287,10 @@ public class ExServer {
                     // logger.info(macAddress + " " + ip + " " + devicePacks);
                     for (byte[] bytes : devicePacks) {
                         logger.info("Parsed beacon: " + BeaconParser.bytesToHex(bytes));
-                        Object beacon = parseBeaconData(bytes);
-                        if (beacon != null) {
-                            logger.info("Parsed beacon: " + beacon.toString());
-                        } else {
-                            logger.warning("Failed to parse beacon data for topic: " + topic);
-                        }
+                        parseBeaconData(bytes);
                     }
                     
-                    logger.info("xwk-iot-exhook " + macAddress + " " + ip + " " + devicePacks + " " + time);
+                    logger.info("xwk-iot-exhook " + macAddress + " " + ip + " " + " " + time);
                 } catch (Exception e) {
                     logger.warning(topic + " Failed to decode MessagePack data: " + e.getMessage());
                 }
@@ -345,12 +340,14 @@ public class ExServer {
          */
         private Object parseBeaconData(byte[] data) {
             BeaconParser.IBeacon iBeacon = BeaconParser.parseIBeacon(data);
-            if (iBeacon != null)
+            if (iBeacon != null){
+                logger.info("Parsed iBeacon: " + iBeacon.toString());
+                logger.info("Parsed iBeacon distance: " + iBeacon.estimateDistance());
                 return iBeacon;
-
-            BeaconParser.EddystoneUID eddystone = BeaconParser.parseEddystoneUID(data);
-            if (eddystone != null)
-                return eddystone;
+            }
+            // BeaconParser.EddystoneUID eddystone = BeaconParser.parseEddystoneUID(data);
+            // if (eddystone != null)
+            //     return eddystone;
 
             return null;
         }
