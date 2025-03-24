@@ -115,6 +115,7 @@ public class BeaconParser {
         private final int rssi;
         private final String macAddress;
         private final int dataType;
+        private double distance;
 
         public IBeacon(String uuid, int major, int minor, int txPower,int rssi, String macAddress, int dataType) {
             this.uuid = uuid;
@@ -124,6 +125,7 @@ public class BeaconParser {
             this.rssi = rssi;
             this.macAddress = macAddress;
             this.dataType = dataType;
+            this.distance = estimateDistance();
         }
 
         /**

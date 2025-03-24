@@ -342,7 +342,7 @@ public class ExServer {
             BeaconParser.IBeacon iBeacon = BeaconParser.parseIBeacon(data);
             if (iBeacon != null){
                 logger.info("Parsed iBeacon: " + iBeacon.toString());
-                logger.info("Parsed iBeacon distance: " + iBeacon.estimateDistance());
+                // logger.info("Parsed iBeacon distance: " + iBeacon.estimateDistance());
                 return iBeacon;
             }
             // BeaconParser.EddystoneUID eddystone = BeaconParser.parseEddystoneUID(data);
