@@ -140,7 +140,7 @@ public class BeaconParser {
         }
 
         public double estimateDistance() {
-            return estimateDistance(2.0); // 默认环境因子为 2.0
+            return estimateDistance(3.0); // 默认环境因子为 2.0-空旷环境，3.0-办公环境，4.0-极端环境
         }
     }
 
