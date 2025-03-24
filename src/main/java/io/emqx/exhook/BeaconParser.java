@@ -21,6 +21,11 @@ public class BeaconParser {
             return null;
         }
 
+        // 数据类型 00 非定向可连接广播 01 定向连接广播 02 非定向扫描广播 03 非定向不可连接广播 04 扫描回应
+        byte dataType = rawData[0];
+        // device mac address Byte 2 - 7
+        byte[] macBytes = Arrays.copyOfRange(rawData, 1, 7);
+
         // 提取 RSSI（网关设备的第8个字节是 RSSI，索引为7）
         byte rssiByte = rawData[7];
         int rssi = (rssiByte & 0xFF) - 256; // 转为有符号整数（-256即 0xFFFFFF00 的补码操作）
@@ -36,7 +41,7 @@ public class BeaconParser {
         // 提取 TX Power（校准 RSSI）
         int txPower = rawData[37];
 
-        return new IBeacon(uuid, major, minor, txPower, rssi);
+        return new IBeacon(uuid, major, minor, txPower, rssi, bytesToHex(macBytes), dataType);
     }
 
     public static boolean isByteEqualTo(byte[] data, int index, int unsignedValue) {
@@ -108,13 +113,17 @@ public class BeaconParser {
         private final int minor;
         private final int txPower;
         private final int rssi;
+        private final String macAddress;
+        private final int dataType;
 
-        public IBeacon(String uuid, int major, int minor, int txPower,int rssi) {
+        public IBeacon(String uuid, int major, int minor, int txPower,int rssi, String macAddress, int dataType) {
             this.uuid = uuid;
             this.major = major;
             this.minor = minor;
             this.txPower = txPower;
             this.rssi = rssi;
+            this.macAddress = macAddress;
+            this.dataType = dataType;
         }
 
         /**
