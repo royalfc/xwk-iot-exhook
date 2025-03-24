@@ -45,7 +45,7 @@ public class BeaconParser {
                hex.substring(12, 16) + "-" + hex.substring(16, 20) + "-" + hex.substring(20);
     }
 
-    private static String bytesToHex(byte[] bytes) {
+    public static String bytesToHex(byte[] bytes) {
         StringBuilder hex = new StringBuilder();
         for (byte b : bytes) {
             hex.append(String.format("%02X", b));
